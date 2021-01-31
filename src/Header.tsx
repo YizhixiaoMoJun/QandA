@@ -5,7 +5,7 @@ import { getAutomaticTypeDirectiveNames } from 'typescript';
 import { UserIcon } from './UserIcon';
 import { fontFamily, fontSize, gray1, gray2, gray5 } from './styles';
 import { sign } from 'crypto';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export const Header = () => {
 
@@ -13,9 +13,13 @@ export const Header = () => {
         console.log(e.currentTarget.value);
     };
 
-    const [
-        category,
-    ] = React.useState("test");
+ 
+    const [searchParams] = useSearchParams();
+    const criteria = searchParams.get('criteria') || '';
+    //const searchParams = new URLSearchParams(location.search);
+    
+    const[search,setSearch] = React.useState(criteria);
+
     return (
         <div css={css`
 
@@ -54,6 +58,7 @@ export const Header = () => {
             <input
                 type="text"
                 placeholder="Search..."
+                value = {search}
                 onChange={handleSearchInputChange}
                 css={css`
                     box-sizing : border-box;
