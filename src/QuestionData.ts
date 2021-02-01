@@ -1,3 +1,5 @@
+import { Answer } from "./Answer";
+
 export interface QuestionData {
     questionId: number;
     title: string;
@@ -22,12 +24,7 @@ const questions: QuestionData[] = [
         userName: 'Shirley',
         created: new Date(),
         answers: [
-            {
-                answerId: 1,
-                content: 'To catch problems earlier speeding up your developments',
-                userName: 'Jane',
-                created: new Date(),
-            }
+
         ]
     },
     {
@@ -85,12 +82,53 @@ export const getQuestion = async (
     return results.length === 0 ? null : results[0];
 }
 
-export const searchQuestions = async(
+export const searchQuestions = async (
     criteria: string
 ): Promise<QuestionData[]> => {
     await wait(500);
-    return questions.filter(q=>
+    return questions.filter(q =>
         q.title.toLowerCase().indexOf(criteria.toLowerCase()) >= 0 ||
         q.content.toLowerCase().indexOf(criteria.toLowerCase()) >= 0
     );
+}
+
+export interface PostQuestionData {
+    title: string;
+    content: string;
+    userName: string
+    created: Date;
+}
+
+export const postQuestion = async (
+    question: PostQuestionData,
+): Promise<QuestionData | undefined> => {
+    await wait(500);
+    const questionId = Math.max(...questions.map(q => q.questionId)) + 1;
+    const newQuestion: QuestionData = {
+        ...question,
+        questionId,
+        answers: [],
+    };
+    questions.push(newQuestion);
+    return newQuestion;
+}
+
+export interface PostAnswerData {
+    questionId: number;
+    content: string;
+    userName: string;
+    created: Date;
+}
+
+export const postAnswer = async (
+    answer: PostAnswerData,
+): Promise<AnswerData | undefined> => {
+    await wait(500);
+    const question = questions.filter(q => q.questionId === answer.questionId)[0];
+    const answerInQuestion: AnswerData = {
+        answerId: 99,
+        ...answer,
+    };
+    question.answers.push(answerInQuestion);
+    return answerInQuestion;
 }
