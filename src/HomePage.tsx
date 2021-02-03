@@ -2,29 +2,33 @@
 
 import { css } from '@emotion/react';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Page } from './Page';
 import { PageTitle } from './PageTitle';
-import { getUnAnsweredQuestion, QuestionData } from './QuestionData';
+import { getUnAnsweredQuestion } from './QuestionData';
 import { QuestionList } from './QuestionList';
+import { AppState, gettingUnansweredQuestionsAction, gotUnansweredQuestionsAction } from './store';
 import { PrimaryButton } from './styles';
 
 export const HomePage = () => {
-    const [
-        questions,
-        setQuestions
-    ] = React.useState<QuestionData[]>([]);
+    const dispatch = useDispatch();
 
-    const [
-        qusetionsLoading,
-        setQuestionsLoading
-    ] = React.useState(true);
+    const questions = useSelector(
+        (state: AppState) => state.questions.unanswered,
+    );
+
+    const questionsLoading = useSelector(
+        (state: AppState) => state.questions.loading,
+    );
+
 
     React.useEffect(() => {
         const doGetUnansweredQuestions = async () => {
+            dispatch(gettingUnansweredQuestionsAction());
             const unansweredQuestions = await getUnAnsweredQuestion();
-            setQuestions(unansweredQuestions);
-            setQuestionsLoading(false);
+            console.log(unansweredQuestions);
+            dispatch(gotUnansweredQuestionsAction(unansweredQuestions));
         };
 
         doGetUnansweredQuestions();
@@ -51,7 +55,7 @@ export const HomePage = () => {
                 </div>
               
             </div>
-            {qusetionsLoading ? (
+            {questionsLoading ? (
                     <div>Loading...</div>
                 ) : (<QuestionList data={questions || []} />)}
         </Page>

@@ -4,9 +4,11 @@ import { FieldContainer, FieldError, FieldLabel, Fieldset, FieldTextArea, FormBu
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Page } from './Page';
-import { getQuestion, postAnswer, postQuestion, QuestionData } from './QuestionData';
+import { getQuestion, postAnswer } from './QuestionData';
 import { AnswerList } from './AnswerList';
 import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState, gettingQuestionAction, gotQuestionAction } from './store';
 
 type FormData = {
     content: string;
@@ -17,18 +19,18 @@ export const QuestionPage = () => {
         mode: 'onBlur',
     });
 
-    const [
-        question,
-        seQuestion,
-    ] = React.useState<QuestionData | null>(null);
-    const { questionId } = useParams();
-
+     const dispatch = useDispatch();
+     const question = useSelector(
+         (state: AppState) => state.questions.viewing,
+     );
+    const {questionId} = useParams();
     React.useEffect(() => {
         const doGetQuestiom = async (
             questionId: number
         ) => {
+            dispatch(gettingQuestionAction());
             const foundQuestion = await getQuestion(questionId);
-            seQuestion(foundQuestion);
+            dispatch(gotQuestionAction(foundQuestion));
         };
 
         if (questionId) {

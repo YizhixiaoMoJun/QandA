@@ -5,21 +5,22 @@ import { Page } from './Page';
 import { useSearchParams } from 'react-router-dom';
 import { QuestionData, searchQuestions } from './QuestionData';
 import { QuestionList } from './QuestionList';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState, searchedQuestionAction, searchingQuestionAction } from './store';
 
 export const SearchPage = () => {
     const [searchParams] = useSearchParams();
-
-    const[
-        questions,
-        setQuestions,
-    ] = React.useState<QuestionData[]>([]);
-
+    const dispatch = useDispatch();
+    const questions = useSelector(
+        (state: AppState) => state.questions.searched,
+    );
     const search = searchParams.get("criteria") || "";
 
     React.useEffect(()=>{
         const doSearch = async(criteria:string) =>{
+            dispatch(searchingQuestionAction());
             const foundResult = await searchQuestions(criteria);
-            setQuestions(foundResult);
+            dispatch(searchedQuestionAction(foundResult));
         };
 
         doSearch(search);

@@ -3,7 +3,7 @@ import { QuestionData } from "./QuestionData";
 
 interface QuestionState {
     readonly loading: boolean;
-    readonly unansered: QuestionData[];
+    readonly unanswered: QuestionData[];
     readonly viewing: QuestionData | null;
     readonly searched: QuestionData[];
 };
@@ -14,7 +14,7 @@ export interface AppState {
 
 const initialQuestionState: QuestionState = {
     loading: false,
-    unansered: [],
+    unanswered: [],
     viewing: null,
     searched: []
 };
@@ -75,7 +75,7 @@ const questionReducer = (
         case GotUnansweredQuestions: {
             return {
                 ...state,
-                unansered: action.questions,
+                unanswered: action.questions,
                 loading: false,
             }
 
@@ -113,6 +113,7 @@ const questionReducer = (
 
         }
     };
+    return state;
 };
 
 const rootReducer = combineReducers<AppState>({
